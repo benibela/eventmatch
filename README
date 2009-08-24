@@ -1,0 +1,41 @@
+
+Pascal-programme
+---------------
+eventsort.lpr: Implementiert die Heuristik (Hauptprogramm)
+sortfunc.pas:  Implementiert die Heuristik (Unit für eventsort.lpr)
+eventgenerator.lpr: Erzeugt sämtliche möglichen Logs
+
+Aufruf:
+lpr mit fpc compilern und Programm mit demselben Namen wie die lpr starten 
+
+
+Scala-Programme
+----------------
+eventchecker.scala (EventChecker): Überprüft verschiedene Hypothesen über die Ausgabe der Heuristik (Eingabe teilweise stdin)
+eventmatch.scala (EventMatcher): Implementiert die Heuristik
+eventmatchgui.scala (EventMatchGUI): Implementiert die Heuristik (mit Animation)
+eventmatchmove.scala: (EventMatcherMove) Implementiert einen möglichen Ersatz für die Heuristik, basierend auf einer Idee von Prof. Wanke (dieser Algorithmus funktioniert aber nicht)
+eventsender.scala (EventSender): Generiert zufällige Logs durch Simulation von Sendern und Empfängern
+graphicsx.scala: Java Graphics2D zu LaTeX Converter
+
+Aufruf:
+scala ClassName
+(compilern mit scalac filename.scala)
+
+Skripte
+---------------
+gen.sh: Ruft mehrmals eventsender.scala auf
+test.sh: Testet die Heuristik mit mehreren Aufrufen von eventsender/eventsort/eventchecker
+
+
+
+Eingabe von Logs erfolgt über stdin (nur bei EventMatchGUI stattdessen in Datei) 
+im Format <Lognummer>\nEreignissstring\nEreignisstring\n...
+z.b:
+3
+AbcA
+aBC
+abca
+
+Sonstige Eingaben (außer bei eventcheck) erfolgen per Kommandozeile und das Programm
+erklärt die Parameter beim 

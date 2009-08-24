@@ -1,0 +1,3 @@
+for ((i=1; i<10;i++)); do scala.bat EventSender 4 20 50 --no-partial-receiving > npri$i && ./eventsort < npri$i > nprs$i && scala.bat EventChecker --rec-clock-algo < nprs$i > nprc$i 2> npre$i; done;
+
+#bash-3.00$ for ((i=1; i<1000;i++)); do scala.bat EventSender 2 20 10 --no-partial-receiving > m2i$i && ./eventsort < m2i$i > m2s$i && scala.bat EventChecker --rec-clock-algo < m2s$i > m2c$i 2> m2e$i; done; ls -s m2e*

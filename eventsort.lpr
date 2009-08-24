@@ -4,11 +4,13 @@ program eventSort;
 
 uses sysutils, sortfunc;
 
-var data:array of array of longint;
+var data:array of array of longint;//array von logs, jedes ein array von ereignisse (<0 empfänger, >0 sender)
     cMin,cMax:array of array of array of longint;
     s:string;
     i,j,n: Integer;
 begin
+  debugVerbose:=paramcount()>0;
+  //einlesen
   readln(n);
   setlength(data,n);
   for i:=0 to n-1 do begin
@@ -21,11 +23,15 @@ begin
       else raise exception.create('Invalid character '+s[j]+' in '+s);
     end;
   end;
+  //heuristik ausführen
   sort(data,cMin,cMax);
-  writeln;
+  //ausgeben
+  writeln(n);
   WriteState(data,cMin,cMax);
-  writeln(stderr,'debugTotalCrossChanges:',debugTotalCrossChanges);
-  writeln(stderr,'debugTotalWipes (=repeats):',debugTotalWipes);
+  if debugVerbose then begin
+    writeln(stderr,'debugTotalCrossChanges:',debugTotalCrossChanges);
+    writeln(stderr,'debugTotalWipes (=repeats):',debugTotalWipes);
+  end;
 end.
 
 

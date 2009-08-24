@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="\"/>
+    <Version Value="7"/>
+    <General>
+      <Flags>
+        <AlwaysBuild Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <TargetFileExt Value=".exe"/>
+      <Icon Value="0"/>
+      <UseXPManifest Value="True"/>
+      <ActiveEditorIndexAtStart Value="0"/>
+    </General>
+    <VersionInfo>
+      <ProjectVersion Value=""/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <CommandLineParams Value="2 3 3 abc"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="eventgenerator.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="eventgenerator"/>
+        <CursorPos X="7" Y="130"/>
+        <TopLine Value="107"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="26"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="P:\programming\lazarus\fpc\2.2.4\source\rtl\inc\systemh.inc"/>
+        <CursorPos X="11" Y="428"/>
+        <TopLine Value="415"/>
+        <UsageCount Value="9"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="ss"/>
+        <CursorPos X="25" Y="1485"/>
+        <TopLine Value="1483"/>
+        <UsageCount Value="10"/>
+        <SyntaxHighlighter Value="None"/>
+      </Unit2>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="31" Column="15" TopLine="31"/>
+      </Position1>
+      <Position2>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="63" Column="30" TopLine="51"/>
+      </Position2>
+      <Position3>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="82" Column="17" TopLine="58"/>
+      </Position3>
+      <Position4>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="64" Column="40" TopLine="49"/>
+      </Position4>
+      <Position5>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="37" Column="12" TopLine="31"/>
+      </Position5>
+      <Position6>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="67" Column="45" TopLine="48"/>
+      </Position6>
+      <Position7>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="58" Column="27" TopLine="40"/>
+      </Position7>
+      <Position8>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="63" Column="27" TopLine="45"/>
+      </Position8>
+      <Position9>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="56" Column="18" TopLine="45"/>
+      </Position9>
+      <Position10>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="59" Column="26" TopLine="45"/>
+      </Position10>
+      <Position11>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="73" Column="15" TopLine="57"/>
+      </Position11>
+      <Position12>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="91" Column="30" TopLine="75"/>
+      </Position12>
+      <Position13>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="93" Column="14" TopLine="78"/>
+      </Position13>
+      <Position14>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="92" Column="1" TopLine="79"/>
+      </Position14>
+      <Position15>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="95" Column="39" TopLine="78"/>
+      </Position15>
+      <Position16>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="92" Column="1" TopLine="79"/>
+      </Position16>
+      <Position17>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="93" Column="24" TopLine="79"/>
+      </Position17>
+      <Position18>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="92" Column="1" TopLine="79"/>
+      </Position18>
+      <Position19>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="94" Column="1" TopLine="81"/>
+      </Position19>
+      <Position20>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="78" Column="39" TopLine="61"/>
+      </Position20>
+      <Position21>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="32" Column="15" TopLine="20"/>
+      </Position21>
+      <Position22>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="49" Column="19" TopLine="36"/>
+      </Position22>
+      <Position23>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="50" Column="39" TopLine="36"/>
+      </Position23>
+      <Position24>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="58" Column="17" TopLine="36"/>
+      </Position24>
+      <Position25>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="69" Column="20" TopLine="61"/>
+      </Position25>
+      <Position26>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="71" Column="11" TopLine="61"/>
+      </Position26>
+      <Position27>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="84" Column="1" TopLine="67"/>
+      </Position27>
+      <Position28>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="89" Column="65" TopLine="76"/>
+      </Position28>
+      <Position29>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="92" Column="30" TopLine="68"/>
+      </Position29>
+      <Position30>
+        <Filename Value="eventgenerator.lpr"/>
+        <Caret Line="16" Column="1" TopLine="11"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)\"/>
+    </SearchPaths>
+    <CodeGeneration>
+      <Checks>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+    </CodeGeneration>
+    <Other>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

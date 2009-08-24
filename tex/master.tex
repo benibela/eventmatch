@@ -1,0 +1,150 @@
+\documentclass[12pt,a4paper,twoside,%
+BCOR12mm,DIV12,%
+headsepline,%
+cleardoubleempty,chapterprefix,parskip,%
+liststotoc,idxtotoc,bibtotoc]{scrbook}
+ 
+\usepackage[english, ngerman]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{courier}
+\usepackage{amsmath}
+\makeatletter
+\def\displaymath{\typeout{*** Do not use DISPLAYMATH. Use \[...\] instead ***}}
+\def\eqnarray{\typeout{*** Do not use EQNARRAY(*). Use align(*)-environment instead ***}}
+\makeatother
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{pict2e}
+\usepackage{ifpdf}
+\usepackage{makeidx}
+\usepackage{nomencl}
+\usepackage{setspace}
+\makeatletter
+\def\NAT@parse{\typeout{This is a fake Natbib command to fool Hyperref.}}
+\makeatother
+\usepackage[plainpages=false,pdfpagelabels]{hyperref}
+\usepackage{lscape}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{amsthm}
+\usepackage{stmaryrd}
+
+\theoremstyle{plain}% default
+\newtheorem{thm}{Theorem}[chapter]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{defi}[thm]{Definition}
+\newenvironment{freethm}[1]{\begin{trivlist}\item[\hskip \labelsep {\bfseries #1}] \itshape}{\end{trivlist}}
+\newenvironment{plem}[1]{\begin{freethm}{Wiederholtes Lemma #1}}{\end{freethm}}
+		
+\ifpdf
+%  \usepackage{thumbpdf}
+    \definecolor{brown}{cmyk}{0, 0.81, 1, 0.60}
+    \hypersetup{%
+      pdftitle={Titel der Bachelorarbeit}, %%%% HIER AENDERN!!!
+      pdfsubject={Bachelorarbeit},
+      pdfauthor={AUTOR},           %%%% HIER AENDERN!!!
+      pdfkeywords={KEYWORDS},      %%%% HIER AENDERN!!!
+      colorlinks=false, urlcolor=blue, citecolor=brown,
+      bookmarksnumbered=true,
+    }
+\else   
+\fi
+
+\usepackage{algorithmic}
+\renewcommand{\algorithmiccomment}[1]{\textit{//#1}}
+
+
+\usepackage{enumerate}
+\newenvironment{enumcases}{\begin{enumerate}[F\text{a}ll 1:]}{\end{enumerate}}
+\interfootnotelinepenalty=9999
+\widowpenalty=9999
+\clubpenalty=9999
+
+
+\hyphenation{DecIPTTL}
+
+
+\makeindex
+%\makeglossary %% old macro definition
+\makenomenclature %% new macro definition
+
+\makeatletter
+\newif\ifscan@allowed
+\def\efill{\hfill\nopagebreak}%
+\def\dotfill{\leaders\hbox to.6em{\hss .\hss}\hskip\z@ plus 1fill}%
+\def\dotfil{\leaders\hbox to.6em{\hss .\hss}\hfil}%
+\def\pfill{\unskip~\dotfill\penalty500\strut\nobreak
+           \dotfil~\ignorespaces}%
+\makeatother
+
+\listfiles
+
+\begin{document}
+\onehalfspacing
+
+\frontmatter
+
+\pdfbookmark[0]{Titelseite}{tit}
+\include{titlepage}
+
+\cleardoublepage
+
+\input{acknowledgements}
+
+\cleardoublepage
+
+\pdfbookmark[0]{\contentsname}{content}
+\tableofcontents
+
+%\listoffigures
+
+%\listoftables
+
+%\renewcommand*{\nomname}{Abkrzungsverzeichnis}
+\cleardoublepage
+\markboth{\MakeUppercase \nomname}{\MakeUppercase \nomname}
+%\printglossary[3cm]%% old macro definition
+\printnomenclature %% new macro definition
+
+
+\mainmatter
+
+\cleardoublepage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%    Beginning of the main document        %%
+%%                                          %%
+%%    Include your tex-files with \input{}  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{intro}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%    End of the main document              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\backmatter
+
+%\renewcommand*{\bibname}{Literaturverzeichnis}
+
+%\bibliographystyle{alpha}
+\bibliographystyle{alphadin} %% german output
+
+%\xbibliography{conferences,rfc,AdHocNetworking}
+\bibliography{literatur}
+
+\printindex
+
+\include{declaration}
+\end{document}
+

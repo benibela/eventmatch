@@ -17,8 +17,10 @@ procedure sort(const data: TInData;out clocksMin,clocksMax: TOutData);
 
 var debugTotalCrossChanges:longint=0;
     debugTotalWipes:longint=0;
+	debugVerbose: boolean;
 implementation
 
+//Überprüft ob sich die Intervalvektoruhren der beiden Ereignisse in allen Koordinaten schneiden
 function intersect(min1,max1,min2,max2:array of longint):boolean;
 var i:longint;
 begin
@@ -27,6 +29,7 @@ begin
     result:=result and (min1[i]<=max2[i]) and (min2[i]<=max1[i]);
 end;
 
+//gibt die momentanen vektoruhren aus (eventuell mit markierung der letzten änderung)
 procedure writeState(const data: TInData; const cMin,cMax: TOutData;
                     starMarkL:longint=-1;starMarkI:longint=-1;
                     leftMarkL:longint=-1;leftMarkI:longint=-1;
@@ -53,7 +56,9 @@ begin
   writeln;
 end;
 
+//führt die heuristik aus
 procedure sort(const data: TInData; out clocksMin,clocksMax: TOutData);
+  //kreuztauscht und gibt zurück, ob gekreuztauscht wurde
   function crossChanged(l,i,slog,sfirst,slast:longint):boolean;
   var j:longint;
   begin
@@ -80,10 +85,11 @@ procedure sort(const data: TInData; out clocksMin,clocksMax: TOutData);
   end;
 
 var
-    senderCache: array of longint; //sender=>log
+    senderCache: array of longint; //sendetyp=>log
     i,j,k,l,s,slog,sfirst,slast,maxS:longint;
     changed:boolean;
 begin
+  //vektoruhren initialisieren
   setlength(clocksMin,length(data));
   setlength(clocksMax,length(data));
   debugTotalCrossChanges:=0;
@@ -100,6 +106,7 @@ begin
       clocksMax[i,j,i]:=j;
     end;
   end;
+  //sendertyp => log hash initialisieren
   maxS:=0;
   for l:=0 to high(data) do
     maxS:=max(maxvalue(data[l]),maxS);
@@ -107,7 +114,8 @@ begin
   for l:=0 to high(data) do
     for i:=0 to high(data[l]) do
       if data[l,i]>0 then senderCache[data[l,i]]:=l;
-  writeState(data,clocksMin,clocksMax);
+  //heuristik
+  if debugVerbose then writeState(data,clocksMin,clocksMax);
   repeat
     changed:=false;
     //crosschange
@@ -116,17 +124,22 @@ begin
         if data[l,i]<0 then begin
           s:=-data[l,i];
           slog:=senderCache[s];
-          sfirst:=high(senderCache[s]);
+          slast:=0;
+          sfirst:=high(data[slog]);
+		  //minimales/maximales sendeereignis suchen
           for j:=0 to high(data[slog]) do
             if (data[slog,j]=s) and intersect(clocksMin[l,i],clocksMax[l,i],clocksMin[slog,j],clocksMax[slog,j]) then begin
               sfirst:=min(sfirst,j);
               slast:=max(sfirst,j);
             end;
           if slast<sfirst then raise Exception.Create('Impossible connection');
+		  //kreuztauschen
           if crossChanged(l,i,slog,sfirst,slast) then begin
             changed:=true;
-            writeln('crosschanged: ',l,' ',i,' ',slog,' ',sfirst,' ',slast);
-            writeState(data,clocksMin,clocksMax,l,i,slog,sfirst,slog,slast);
+			if debugVerbose then begin
+			  writeln('crosschanged: ',l,' ',i,' ',slog,' ',sfirst,' ',slast);
+			  writeState(data,clocksMin,clocksMax,l,i,slog,sfirst,slog,slast);
+			end;
             debugTotalCrossChanges+=1;
           end;
         end;
@@ -149,8 +162,10 @@ begin
               clocksMax[l,i,j]:=clocksMax[l,i+1,j];
             end;
       end;
-      writeln('wiped:');
-      writeState(data,clocksMin,clocksMax);
+	  if debugVerbose then begin
+        writeln('wiped:');
+        writeState(data,clocksMin,clocksMax);
+	  end;
       debugTotalWipes+=1;
     end;
   until not changed;
