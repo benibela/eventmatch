@@ -1,0 +1,23 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/theme/beamerthemeDuesseldorf.sty,v 1.0 2008/04/09 20:15:00 koegel Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\newif\ifbeamer@secheader
+\beamer@secheaderfalse
+
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\useoutertheme[footline=authortitledatepage]{koegel}
+\useinnertheme[shadow=true]{rounded}
+\usecolortheme{koegel}
+
+\setbeamercolor{titlelike}{parent=structure}
+
+\mode
+<all>
+

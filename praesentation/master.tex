@@ -1,0 +1,919 @@
+\documentclass[ignorenonframetext]{beamer}
+
+\mode<article>
+{
+  \usepackage{fullpage}
+  \usepackage{pgf}
+  \usepackage{hyperref}
+  \setjobnamebeamerversion{vortrag.beamer}
+}
+
+% WK OLD
+% \mode<presentation>
+% {
+%   \usetheme{Darmstadt}
+%   \useoutertheme{smoothbarssmall}
+%   \usecolortheme{seahorse}
+% %   \setbeamercovered{transparent}
+% }
+\mode<presentation> {
+    \usetheme{Duesseldorf}
+    \setbeamercovered{transparent}
+}
+
+\setbeamertemplate{footline}{
+  {%
+    \begin{beamercolorbox}[colsep=1.5pt]{upper separation line foot}
+    \end{beamercolorbox}
+%     \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+%       leftskip=.3cm,rightskip=.3cm plus1fil]{author in head/foot}%
+%       \leavevmode{\usebeamerfont{author in head/foot}\insertshortauthor}%
+%       \hfill%
+%       {\usebeamerfont{institute in head/foot}\usebeamercolor[fg]{institute in head/foot}\insertshortinstitute}%
+%     \end{beamercolorbox}%
+    \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+      leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+      {\usebeamerfont{title in head/foot}\insertshorttitle}%
+      \hfill%
+      \insertframenumber% /\inserttotalframenumber
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[colsep=1.5pt]{lower separation line foot}
+    \end{beamercolorbox}
+  }
+}
+
+\usepackage[english,ngerman]{babel}
+\usepackage{ngerman}
+\usepackage[utf8]{inputenc}
+\usepackage{times,mathptmx,eurosym}
+\usepackage[arrow, matrix, curve]{xy}
+\usepackage[T1]{fontenc}
+\usepackage{multimedia}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{multirow}
+\usepackage{pict2e}
+\usepackage{tabularx}
+%\usepackage{animate}
+\newcommand{\reference}[1]{{\scriptsize [#1]}}
+
+
+\title[]{Eigenschaften eines Algorithmus zur Zuordnung von nicht eindeutigen Sende- und Empfangsereignissen in Ereignisprotokollen}
+
+% \subtitle{Implicit Feedback in Wireless Multihop Networks}
+%{Untertitel nur angeben, wenn es einen im Tagungsband gibt}
+
+\author{Benito van der Zander}
+% - Namen ssen in derselben Reihenfolge wie im Papier erscheinen.
+% - Der \inst{?} Befehl sollte nur verwendet werden, wenn die Autoren
+%   unterschiedlichen Instituten angeh�ren.
+
+\institute%[Universit�ten Hier und Dort] % (optional, aber oft n�tig)
+{Lehrstuhl für Rechnernetze\\
+Heinrich-Heine-Universität D\"usseldorf}
+
+\date{14. September 2009}
+
+% \date[VTC Spring 2007] % (optional, sollte der abgek�rzte Konferenzname sein)
+% {23 April 2007}
+% \date{Universität Bonn \quad 16 August 2007}
+% - Vollee oder abgek�rzter Name sind m�glich.
+% - Dieser Eintrag ist nicht f�r das Publikum gedacht (das wei�
+%   n�mlich, bei welcher Konferenz es ist), sondern f�r Leute, die die
+%   Folien sp�ter lesen.
+
+% \subject{Offline Time Synchronization for libpcap Logs}
+% Dies wird lediglich in den PDF Informationskatalog einf�gt. Kann gut
+% weggelassen werden.
+
+
+% Falls eine Logodatei namens "university-logo-filename.xxx" vorhanden
+% ist, wobei xxx ein von latex bzw. pdflatex lesbares Graphikformat
+% ist, so kann man wie folgt ein Logo einf�gen:
+
+% \pgfdeclareimage[width=1.5cm]{university-logo}{unilogo}
+% \logo{\pgfuseimage{university-logo}}
+\logo{\includegraphics[width=1.5cm]{unilogo}}
+% Folgendes sollte gel�scht werden, wenn man nicht am Anfang jedes
+% Unterabschnitts die Gliederung nochmal sehen m�chte.
+% \AtBeginSubsection[]
+% {
+%   \begin{frame}<beamer>
+%     \frametitle{Gliederung}
+%     \tableofcontents[currentsection,currentsubsection]
+%   \end{frame}
+% }
+
+
+% Falls Aufz�hlungen immer schrittweise gezeigt werden sollen, kann
+% folgendes Kommando benutzt werden:
+
+%\beamerdefaultoverlayspecification{<+->}
+
+\setbeamercolor{question}{fg=black,bg=yellow}
+\setbeamercolor{nextquestion}{fg=black,bg=green}
+
+
+
+
+\newcommand{\vvv}[3]{\mbox{$\left( \begin{smallmatrix} #1\\ #2\\ #3 \end{smallmatrix} \right)$}}
+
+\newcommand{\mybreak}{\par\vspace*{\baselineskip}}
+
+\begin{document}
+
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% EINLEITUNG
+% \section*{Einleitung}
+
+\begin{frame}
+  \frametitle{Übersicht}
+
+\tableofcontents
+
+
+\end{frame}
+
+\section{Problemstellung}
+\begin{frame}
+	\animate<1-10>
+	Problem: Nachträgliches Berechnen der möglichen Sender für empfangene Nachrichten.\mybreak %Wie berechnet man aus aufgezeichneten Ereignissen welche Nachricht empfangen wurde?\mybreak 
+	
+	
+			Sendende und empfangene Knoten:\mybreak
+	
+	\begin{center}
+%	\begin{tabular}{ccccccccc}
+%		A &   &  A&   &    & A  &   &   &$\ldots$\\
+%		  & B &   &   &     &   & B &   & $\ldots$ \\
+%		  &   &   & C &  C  &   &   &   &$\ldots$\\
+%		  & D &   &   &     &   &   & D & $\ldots$\\
+%	\end{tabular}
+	\begin{tabular}{ccccccccccc}
+		\onslide<1->\alert<1>A & \onslide<2->\alert<2>A &\onslide<3->\alert<3>b&\onslide<4->\alert<4>A&\onslide<5->\alert<5>c&     & \onslide<7->\alert<7>A  &\onslide<8->\alert<8>b  &   &\onslide<10->$\ldots$\\
+		\onslide<1->\alert<1>a &               &\onslide<3->\alert<3>B&             &             &\onslide<6->\alert<6>c  &   & \onslide<8->\alert<8>B & \onslide<9->\alert<9>d & \onslide<10->$\ldots$ \\
+		\onslide<1->\alert<1>a &               &\onslide<3->\alert<3>d&\onslide<4->\alert<4>a&\onslide<5->\alert<5>C&\onslide<6->\alert<6>C  &   & \onslide<8->\alert<8>b &   &\onslide<10->$\ldots$\\
+		              &               &\onslide<3->\alert<3>D&\onslide<4->\alert<4>a&   &     &   &   & \onslide<9->\alert<9>D & \onslide<10->$\ldots$\\
+	\end{tabular}
+	\end{center}
+
+	\onslide<1->Führen zu folgenden Logs:\mybreak
+	\begin{center}
+	\begin{tabular}{ccccccccccccccccccccccc}
+		\onslide<1->{\alert<1>A} & \onslide<2->{\alert<2>A} & \onslide<3->{\alert<3>b} & \onslide<4->{\alert<4>A} & \onslide<5->{\alert<5>c} & \onslide<7->{\alert<7>A}  &\onslide<8->{\alert<8>b}  & \onslide<10->{$\ldots$}\\
+		\onslide<1->{\alert<1>a} & \onslide<3->{\alert<3>B} & \onslide<6->{\alert<6>c} & \onslide<8->{\alert<8>B} & \onslide<9->{\alert<9>d} &  \onslide<10->{$\ldots$} \\
+		\onslide<1->{\alert<1>a} & \onslide<3->{\alert<3>d} & \onslide<4->{\alert<4>a} & \onslide<5->{\alert<5>C} & \onslide<6->{\alert<6>C} & \onslide<8->{\alert<8>b} &  \onslide<10->{$\ldots$}\\
+		\onslide<3->{\alert<3>D} & \onslide<4->{\alert<4>a} & \onslide<9->{\alert<9>D} & \onslide<10->{$\ldots$ }\\
+	\end{tabular}
+	\end{center}
+				
+	
+\end{frame}
+\begin{frame}
+	Mögliche Fragen zu diesen Logs:\mybreak
+	
+	\begin{description}
+		%Für ein Ereignis $r \in R$, was ist die Menge der möglichen Sendeereignisse, also für welche $s$ existiert ein  konsistenter GA $A$ mit $A(r) = s$
+		
+		\item[SRC: ] Kann eine konsistente Zuordnung gefunden werden?%Existiert eine konsistente GA
+		
+		\item[uSRC:] Kann eine konsistente und eindeutige Zuordnung gefunden werden?
+		
+		\item[pSRC:] Was ist für ein gegebene Empfangsereignis die Menge der möglichen Sendeereignisse?
+		
+	\end{description}
+	
+\end{frame}
+\section{Komplexität}
+\subsection{3-Exact-Cover (X3C)}
+\begin{frame}
+	\animate<1-3>
+	Existiert eine exakte Mengenüberdeckung?\mybreak
+	
+	Es ist eine Menge gegeben: \[M = \{A, B, C, D, E, F\}\]
+	
+	\pause
+
+	Zusammen mit dreielementigen Untermengen:
+	\begin{center}
+		\begin{tabular}{cccccccc}
+	$M_1 = \{$& $A$ & $B$ & $C$ &   & & &$\}$\\
+ 	\color<3>{red}$M_2 = \{$& \color<3>{red}$A$ &   & \color<3>{red}$C$ & \color<3>{red}$D$ && &\color<3>{red}$\}$\\
+	$M_3 = \{$&   & $B$ & $C$ & $D$ && &$\}$\\
+	 $M_4 = \{$&   &   & $C$ & $D$ & $E$ && $\}$\\
+	\color<3>{red}$M_5 = \{$&   & \color<3>{red}$ B $  &   &   &\color<3>{red}$ E$ & \color<3>{red}$F$& \color<3>{red}$\}$
+		\end{tabular}
+	\end{center}
+
+
+\end{frame}
+
+\subsection{Unique Send-Receive-Correlation (uSRC)}
+
+\begin{frame}
+	\animate<1-6>
+Umwandeln des X3C-Problems in ein uSRC-Problems:\mybreak
+
+Sendelog:
+\only<1-2>{\[L_0 = \{A, B, C, D, E, F\}\]}
+\only<3-4>{\[L_0 = \{A, B, C, D, E, F, \quad A, B, B, C,C,C,D,D,E\}\]}
+\only<5-6>{\[L_0 = \{A, B, C, D, E, F, X, X, X, X, X, X, A, B, B, C,C,C,D,D,E\}\]}
+
+Empfangslogs:
+	\begin{center}
+		\begin{tabular}{ccccccccc}
+			$L_1 = \{$& $a$ & $b$ & $c$ &   & & &\only<5-6>{$x$} & $\}$\\
+			$L_2 = \{$& $a$ &   & $c$ & $d$ && &\only<5-6>{$x$}&$\}$\\
+			$L_3 = \{$&   & $b$ & $c$ & $d$ && &\only<5-6>{$x$}&$\}$\\
+			$L_4 = \{$&   &   & $c$ & $d$ & $e$ &&\only<5-6>{$x$}& $\}$\\
+			$L_5 = \{$&   & $ b $  &   &   &$ e$ & $f$&\only<5-6>{$x$}& $\}$
+		\end{tabular}
+	\end{center}
+
+\only<2>{\color{red}Problem: Zu wenig Sender!}
+\only<4>{\color{red}Problem: Überlappungen!}
+\only<6>{\color{orange}uSRC ist NP-vollständig!}
+\end{frame}
+
+\subsection{Send-Receive-Correlation (SRC)}
+\begin{frame}
+	\animate<1-4>
+	Was ist mit SRC?\mybreak
+
+\pause
+
+	Betrachte:
+	
+	\begin{center}
+\begin{tabular}{cccc}
+	A&b&$\square$&A\\
+	B&a&$\boxdot$&B\\
+\end{tabular}
+	\end{center}
+
+\only<3>{
+Zwei mögliche Zuordnungen:\mybreak
+\begin{tabular}{ccccc}
+	&$A$&$b$        &$\square$&$A$ \\
+	&$\updownarrow$\\
+	$B$&$a$&$\boxdot$&$B$        &  \\
+\end{tabular}
+\hspace{1cm}\vline\hspace{1cm}
+\begin{tabular}{cccccc}
+	$A$&$b$&$\square$&$A$\\
+	& &         &$\updownarrow$\\
+	& &  $B$      &$a$&$\boxdot$&$B$\\
+\end{tabular}\mybreak
+
+}
+
+\only<4>{
+Zwei mögliche Zuordnungen:\mybreak
+\begin{tabular}{cccccc}
+	&$A$ &         &$b$        &$\square$&$A$ \\
+	&  $\updownarrow$ & &$\updownarrow $\\
+	$B$&$a$&$\boxdot$&$B$        &  \\
+\end{tabular}
+\hspace{1cm}\vline\hspace{1cm}
+\begin{tabular}{cccccc}
+	$A$& $b$&$\square$&$A$\\
+	&   $\updownarrow $      & &$\updownarrow$\\
+	&  $B$ &     &$a$&$\boxdot$&$B$\\
+\end{tabular}\mybreak
+
+$\boxdot$ und $\square$ sind nicht gleichzeitig!
+}
+
+
+\end{frame}
+
+\begin{frame}
+	Damit reduzieren wir uSRC auf SRC:\mybreak
+
+\only<1>{	
+Sendelog:
+\[L_0 = \{A, B, C, D, E, F, X, X, X, X, X, X, A, B, B, C,C,C,D,D,E\}\]}
+
+Empfangslogs:
+\begin{center}
+	\only<1>{
+	\begin{tabular}{ccccccccc}
+		$L_1 = \{$& $a$ & $b$ & $c$ &   & & &{$x$} & $  $$\}$\\
+		$L_2 = \{$& $a$ &   & $c$ & $d$ && &{$x$}&$\}$\\
+		$L_3 = \{$&   & $b$ & $c$ & $d$ && &{$x$}&$\}$\\
+		$L_4 = \{$&   &   & $c$ & $d$ & $e$ &&{$x$}& $\}$\\
+		$L_5 = \{$&   & $ b $  &   &   &$ e$ & $f$&{$x$}& $\}$
+	\end{tabular}}
+%	\only<1>{\begin{tabular}{ccccccccc}
+%		$L_1 = \{$& $a$ & $b$ & $c$ &   & & &{$x$} & $  $$\}$\\
+%		$L_2 = \{$& $a$ &   & $c$ & $d$ && &{$x$}&$\}$\\
+%		$L_3 = \{$&   & $b$ & $c$ & $d$ && &{$x$}&$\}$\\
+%		$L_4 = \{$&   &   & $c$ & $d$ & $e$ &&{$x$}& $\}$\\
+%		$L_5 = \{$&   & $ b $  &   &   &$ e$ & $f$&{$x$}& $\}$
+%	\end{tabular}}
+		\only<2-3>{
+		\begin{tabular}{cccccccccccc}
+		$L_1 = \{$&$A_{12}$ & $a_{21}$ & $a$ & $A_{12}$ & $b$ & $c$ &   & & &{$x$} & $\}$\\
+		$L_2 = \{$&$A_{21}$ & $a_{12}$ & $a$ &$A_{21}$ &  & $c$ &  $d$ & & &{$x$} & $\}$\\
+		$L_3 = \{$&&&   && $b$ & $c$ & $d$ && &{$x$}&$\}$\\
+		$L_4 = \{$&&&   &&   & $c$ & $d$ & $e$ &&{$x$}& $\}$\\
+		$L_5 = \{$&&&   &&$ b $  &   &   &$ e$ & $f$&{$x$}& $\}$
+	\end{tabular}}
+	\only<4-5>{
+		\begin{tabular}{ccccccccccccccc}
+			$L_1 = \{$&$A_{12}$&$A_{12}$ & $a_{21}$ & $a$ & $A_{12}$ & $b$ & $c$ &   & & &{$x$} &$A_{12}$& $\}$\\
+			$L_2 = \{$&$A_{22}$&$A_{21}$ & $a_{12}$ & $a$ &$A_{21}$ &  & $c$ & $d$  & & &{$x$} &$A_{21}$& $\}$\\
+			$L_3 = \{$&&&   &&& $b$ & $c$ & $d$ && &{$x$}&&$\}$\\
+			$L_4 = \{$&&&   &&&   & $c$ & $d$ & $e$ &&{$x$}&& $\}$\\
+			$L_5 = \{$&&&   &&&$ b $  &   &   &$ e$ & $f$&{$x$}&& $\}$
+		\end{tabular}}
+	\only<6-7>{
+		\begin{tabular}{ccccccccccccccc}
+			$\ldots B_{13}B_{15}$ & $\ldots B_{13}$ & $B_{15}$ & $b_{31}$ & $b_{51}$ & $b$ & $B_{13}$ & $B_{15} \ldots$ & $B_{13}B_{15}\ldots$\\
+			&&&&$\ldots$\\
+			$\ldots B_{31}B_{35}$ & $\ldots B_{31}$ & $B_{35}$ & $b_{13}$ & $b_{53}$ & $b$ & $B_{31}$ & $B_{35} \ldots$ & $B_{31}B_{35}\ldots$\\
+			&&&&$\ldots$\\
+			$\ldots B_{51}B_{53}$ & $\ldots B_{51}$ & $B_{53}$ & $b_{15}$ & $b_{35}$ & $b$ & $B_{51}$ & $B_{53} \ldots$ & $B_{51}B_{53}\ldots$\\
+			
+		\end{tabular}}
+	\end{center}
+
+	\only<3>{\color{red}Problem: Können die Sendeereignisse  zugewiesen werden?}
+	\only<5>{\color{red}Problem: Mehr als zwei Ereignisse}
+	\only<7>{\color{orange}Somit ist SRC NP-vollständig!}
+		
+\end{frame}
+
+%\begin{frame}
+%	\newcount\opaqueness
+%	\animate<2-10>
+%	
+%	\animatevalue<1-10>{\opaqueness}{100}{0}
+%	abc
+%	\begin{colormixin}{\the\opaqueness!averagebackgroundcolor}
+%		\frametitle{Fadeout Frame}
+%		This text (and all other frame content) will fade out when the
+%		second slide is shown. This even works with
+%		{\color{green!90!black}colored} \alert{text}.
+%	\end{colormixin}
+%\end{frame}
+
+\section{Intervallbasierte Zuordnung und Heuristik}}
+\subsection{Intervalle}
+\begin{frame}
+	
+	\animate<1-2>
+	
+	Bestehen die Lösungen aus Intervallen?\mybreak
+	
+	Betrachte:\mybreak
+	
+	\begin{tabular}{cccccc}
+		B & c & a & B &   & \\
+		C & A & C & b & C & A
+	\end{tabular} \mybreak
+	
+	\pause
+	
+	Mögliche Lösungen:\mybreak
+	
+	
+	
+	\begin{columns}
+		\begin{column}{5cm}
+			\begin{tabular}{cccccccc}
+				B & c & a & & B \\
+				& $\uparrow$ & $\uparrow$ && $\downarrow$ \\
+				& C & A & C & b & C & A
+			\end{tabular} 
+		\end{column}
+
+
+		\begin{column}{5cm}
+			\begin{tabular}{cccccccc}
+				&   &   & B & c & a & B \\
+				&   &   & $\downarrow$ & $\uparrow$ & $\uparrow$ & \\
+				C & A & C & b & C & A
+			\end{tabular} 
+		\end{column}
+	\end{columns}
+	
+	\mybreak Das Sendeintervall für c enthält sämtliche gesendeten C.
+	
+%	\onslide<3>
+%	\begin{figure}[h]
+%		\begin{minipage}[h]{6cm}
+%			\begin{tabular}{ccccccc}
+%				& B & c &  a  & B \\
+%				&   & $\uparrow$ &  ???? & $\downarrow$\\
+%				C & A & C &     & b & C & A
+%			\end{tabular} 
+%		\end{minipage}
+%		\hspace{1cm}\vline\hspace{1cm}
+%		\begin{minipage}[h]{6cm}
+%			\begin{tabular}{cccccccc}
+%				& B & c &   &   & a  & B \\
+%				&   & $\uparrow$ &  ???? && $\uparrow$ & \\
+%				C & A & C & b & C & A
+%			\end{tabular} 
+%		\end{minipage}
+%	\end{figure}
+%	
+\end{frame}
+
+\begin{frame}
+	Aber ist das mittlere C ein gültiger Sender?\mybreak\mybreak
+
+
+	\begin{columns}
+		\begin{column}{6cm}
+			\begin{tabular}{ccccccc}
+				& B & c &  a  & B \\
+				&   & $\uparrow$ &  ???? & $\downarrow$\\
+				C & A & C &     & b & C & A
+			\end{tabular} 
+		\end{column}
+
+		\begin{column}{6cm}
+			\begin{tabular}{cccccccc}
+				& B & c &   &   & a  & B \\
+				&   & $\uparrow$ &  ???? && $\uparrow$ & \\
+				C & A & C & b & C & A
+			\end{tabular} 
+		\end{column}
+	\end{columns}\mybreak\mybreak
+
+	Offensichtlich nicht!
+\end{frame}
+
+\subsection{Heuristik}
+\begin{frame}
+	Findet die Heuristik trotzdem gute Intervalle?\mybreak
+	
+	Betrachte:\mybreak
+	
+	\begin{center}
+		\begin{tabular}{cccccc}
+		A & b & c & A\\
+		B & a & B & c & B\\
+		C & a & b & C
+	\end{tabular}
+\end{center} \mybreak
+	
+	Diese Eingabe ist lösbar:\mybreak
+	
+	\center{\begin{tabular}{cccccc}
+		& A & b & c & A\\
+		& $\updownarrow$ & $\updownarrow$ & $\updownarrow$\\
+		B & a & B & c & B\\
+		& $\updownarrow$ & $\updownarrow$ & $\updownarrow$\\
+		C & a & b & C
+	\end{tabular} }
+	
+\end{frame}
+
+\begin{frame}
+	Die Ausgabe lautet:\mybreak
+	
+	\setlength{\unitlength}{0.7pt}
+	\begin{picture}(380,206)(30,196)
+		\definecolor{R107G107B153}{rgb}{0.41960785,0.41960785,0.6}
+		\definecolor{R153G107B107}{rgb}{0.6,0.41960785,0.41960785}
+		\definecolor{R107G153B107}{rgb}{0.41960785,0.6,0.41960785}
+		\definecolor{R0G128B0}{rgb}{0.0,0.5019608,0.0}
+		\definecolor{R0G179B0}{rgb}{0.0,0.7019608,0.0}
+		\definecolor{R0G0B128}{rgb}{0.0,0.0,0.5019608}
+		\definecolor{R0G0B179}{rgb}{0.0,0.0,0.7019608}
+		\definecolor{R128G0B0}{rgb}{0.5019608,0.0,0.0}
+		\definecolor{R179G0B0}{rgb}{0.7019608,0.0,0.0}
+		\put(60,322){\color{R107G107B153}\linethickness{1.0pt}\vector(80,30){80}}
+		\put(140,352){\color{R107G107B153}\linethickness{1.0pt}\vector(240,-30){240}}
+		\put(60,244){\color{R153G107B107}\linethickness{1.0pt}\vector(160,108){160}}
+		\put(220,352){\color{R153G107B107}\linethickness{1.0pt}\vector(80,-108){80}}
+		\put(60,352){\color{R107G153B107}\linethickness{1.0pt}\vector(80,-30){80}}
+		\put(140,322){\color{R107G153B107}\linethickness{1.0pt}\vector(160,30){160}}
+		\put(60,244){\color{R153G107B107}\linethickness{1.0pt}\vector(240,30){240}}
+		\put(300,274){\color{R153G107B107}\linethickness{1.0pt}\vector(0,-30){30}}
+		\put(60,352){\color{R107G153B107}\linethickness{1.0pt}\vector(80,-108){80}}
+		\put(140,244){\color{R107G153B107}\linethickness{1.0pt}\vector(160,108){160}}
+		\put(60,274){\color{R107G107B153}\linethickness{1.0pt}\vector(160,-30){160}}
+		\put(220,244){\color{R107G107B153}\linethickness{1.0pt}\vector(160,30){160}}
+		\put(50,388){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  A}}
+		\put(37,379){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(37,367){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(37,355){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(67,379){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(67,367){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(67,355){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(60,385){\color{R0G179B0}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(30,388){\color{R0G179B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(30,388){\color{R0G179B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(30,352){\color{R0G179B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(90,388){\color{R0G179B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(90,388){\color{R0G179B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(90,352){\color{R0G179B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(130,388){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  b}}
+		\put(117,379){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(117,367){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(117,355){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(147,379){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(147,367){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  4}}
+		\put(147,355){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(140,385){\color{R0G0B179}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(110,388){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(110,388){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(110,352){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(170,388){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(170,388){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(170,352){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(210,388){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  c}}
+		\put(197,379){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(197,367){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(197,355){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(227,379){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(227,367){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  4}}
+		\put(227,355){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(220,385){\color{R179G0B0}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(190,388){\color{R179G0B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(190,388){\color{R179G0B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(190,352){\color{R179G0B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(250,388){\color{R179G0B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(250,388){\color{R179G0B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(250,352){\color{R179G0B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(290,388){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  A}}
+		\put(277,379){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(277,367){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(277,355){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(307,379){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(307,367){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  4}}
+		\put(307,355){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(300,385){\color{R0G179B0}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(270,388){\color{R0G179B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(270,388){\color{R0G179B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(270,352){\color{R0G179B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(330,388){\color{R0G179B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(330,388){\color{R0G179B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(330,352){\color{R0G179B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(50,310){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  B}}
+		\put(37,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(37,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(37,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(67,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(67,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(67,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(60,307){\color{R0G0B179}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(30,310){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(30,310){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(30,274){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(90,310){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(90,310){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(90,274){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(130,310){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  a}}
+		\put(117,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(117,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(117,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(147,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(147,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(147,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(140,307){\color{R0G179B0}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(110,310){\color{R0G179B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(110,310){\color{R0G179B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(110,274){\color{R0G179B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(170,310){\color{R0G179B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(170,310){\color{R0G179B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(170,274){\color{R0G179B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(210,310){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  B}}
+		\put(197,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(197,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(197,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(227,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(227,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(227,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(220,307){\color{R0G0B179}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(190,310){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(190,310){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(190,274){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(250,310){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(250,310){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(250,274){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(290,310){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  c}}
+		\put(277,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(277,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(277,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(307,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(307,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(307,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(300,307){\color{R179G0B0}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(270,310){\color{R179G0B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(270,310){\color{R179G0B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(270,274){\color{R179G0B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(330,310){\color{R179G0B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(330,310){\color{R179G0B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(330,274){\color{R179G0B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(370,310){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  B}}
+		\put(357,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(357,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  4}}
+		\put(357,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(387,301){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(387,289){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  4}}
+		\put(387,277){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(380,307){\color{R0G0B179}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(350,310){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(350,310){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(350,274){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(410,310){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(410,310){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(410,274){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(50,232){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  C}}
+		\put(37,223){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(37,211){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(37,199){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(67,223){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(67,211){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(67,199){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(60,229){\color{R179G0B0}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(30,232){\color{R179G0B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(30,232){\color{R179G0B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(30,196){\color{R179G0B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(90,232){\color{R179G0B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(90,232){\color{R179G0B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(90,196){\color{R179G0B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(130,232){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  a}}
+		\put(117,223){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(117,211){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(117,199){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(147,223){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(147,211){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  4}}
+		\put(147,199){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  1}}
+		\put(140,229){\color{R0G179B0}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(110,232){\color{R0G179B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(110,232){\color{R0G179B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(110,196){\color{R0G179B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(170,232){\color{R0G179B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(170,232){\color{R0G179B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(170,196){\color{R0G179B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(210,232){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  b}}
+		\put(197,223){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(197,211){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  0}}
+		\put(197,199){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(227,223){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(227,211){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  4}}
+		\put(227,199){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(220,229){\color{R0G0B179}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(190,232){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(190,232){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(190,196){\color{R0G0B179}\linethickness{2.0pt}\line(5,0){5}}
+		\put(250,232){\color{R0G0B179}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(250,232){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(250,196){\color{R0G0B179}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(290,232){\makebox(20,20)[b]{\fontseries{b}\fontsize{12.0}{14}\selectfont  C}}
+		\put(277,223){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  2}}
+		\put(277,211){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(277,199){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(307,223){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(307,211){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  4}}
+		\put(307,199){\makebox(20,20)[br]{\fontsize{10.0}{12}\selectfont  3}}
+		\put(300,229){\color{R179G0B0}\linethickness{2.0pt}\line(0,-30){30}}
+		\put(270,232){\color{R179G0B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(270,232){\color{R179G0B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(270,196){\color{R179G0B0}\linethickness{2.0pt}\line(5,0){5}}
+		\put(330,232){\color{R179G0B0}\linethickness{2.0pt}\line(0,-36){36}}
+		\put(330,232){\color{R179G0B0}\linethickness{2.0pt}\line(-5,0){5}}
+		\put(330,196){\color{R179G0B0}\linethickness{2.0pt}\line(-5,0){5}}
+	\end{picture}
+	
+\end{frame}
+
+\begin{frame}
+	\animate<1-2>
+\newcommand{\updownarrowlarge}{\multirow{3}{*}{\scalebox{1}[3]{$\updownarrow$}}}
+	Also wurde das mittlere B vom unteren b empfangen?\mybreak
+
+\only<1-2>{\begin{columns}
+	\begin{column}{4cm}
+		\begin{tabular}{cc|c|ccccc}
+			& A & b & c & A\\
+			& \only<2>{\updownarrowlarge} & $\updownarrow$\\
+			& & B & a & B & c & B\\
+			& & $\updownarrow$\\  
+			C & a & b & C
+		\end{tabular}
+		
+	\end{column}
+
+	\begin{column}{5cm}
+		\begin{tabular}{cc|c|cccccc}
+			& A &   & b & c & A &\\
+			& \only<2>{\updownarrowlarge} & \\
+			&   & B & a & B & c & B\\
+			& & $\updownarrow$\\  
+			C & a & b & C
+		\end{tabular}
+	\end{column}
+\end{columns}\mybreak}
+
+
+\only<3>{\begin{columns}
+	\begin{column}{4cm}
+		\begin{tabular}{cc|c|ccccc}
+			& A & b & c & A\\
+			& \updownarrowlarge & $\updownarrow$ & \updownarrowlarge & $\updownarrow$\\
+			&   & B &   & a & B & c & B\\
+			& & $\updownarrow$\\  
+			C & a & b & C
+		\end{tabular}
+	\end{column}
+
+	\begin{column}{5cm}
+		\begin{tabular}{cc|c|cccccc}
+			& A &   & b & c & A &\\
+			& \updownarrowlarge &  && \updownarrowlarge & $\updownarrow$\\
+			&   & B &   &   & a & B & c & B\\
+			& & $\updownarrow$\\  
+			C & a & b &   & C
+		\end{tabular}
+	\end{column}
+\end{columns}\mybreak}
+
+\only<3>{	Nein!}
+	
+\end{frame}
+
+\section{Alternativer Algorithmus}
+
+
+\begin{frame}
+Gibt es eine Lösung zu einer Teilmenge der Logs?\mybreak
+
+Betrachte Schnitte:\mybreak
+\only<1>{
+	\[
+	\begin{array}{cccccccc}
+	\ldots & e_1 & \ldots\\
+	\ldots & e_2 & \ldots\\[-3mm]
+	       &     &  \underbrace{}_{\text{lösbar?}}
+	\end{array}
+	\]
+}
+\only<2>{
+	\[
+	\begin{array}{cccccccc}
+	\ldots & e_1 & S & \ldots & S & e'_1 & \ldots\\
+	\ldots & e_2 & S & \ldots & S & e'_2 & \ldots\\
+	\end{array}
+	\]
+}
+\only<3>{	
+	\[
+	\begin{array}{cccccccc}
+	\ldots & e_1 &  \ldots  \\
+	\ldots & e_2 &  \ldots\\
+	\ldots & e_3 &  \ldots\\
+	\ldots & e_4 &  \ldots  \\[-3mm]
+&     &  \underbrace{}_{\text{lösbar?}}	
+	\end{array}
+	\]
+}
+\only<4-5>{	
+	\[
+	\begin{array}{cccccccc}
+	\ldots & e_1 &  \ldots  \\
+	\ldots & e_2 & S & \ldots & S & e'_2 & \ldots\\
+	\ldots & e_3 & S & \ldots & S & e'_3 & \ldots\\
+	\ldots & e_4 &  \ldots  \\
+	\end{array}
+	\]
+}
+
+\only<5>{
+	Dasselbe für links $\Rightarrow$ Algorithmus für uSRC in $O(l^2\cdot n^{l})$}
+\end{frame}
+
+	
+%\newcount\opaqueness
+%\newdimen\offset
+%\begin{frame}
+%	\frametitle{Flying Theorems (You Really Shouldn’t!)}
+%	\animate<2-14>
+%	\animatevalue<1-15>{\opaqueness}{100}{0}
+%	\animatevalue<1-15>{\offset}{0cm}{-5cm}
+%	\begin{colormixin}{\the\opaqueness!averagebackgroundcolor}
+%		\hskip\offset
+%		\begin{minipage}{\textwidth}
+%			\begin{theorem}
+%				This theorem flies out.
+%			\end{theorem}
+%		\end{minipage}
+%	\end{colormixin}
+%	\animatevalue<1-15>{\opaqueness}{0}{100}
+%	\animatevalue<1-15>{\offset}{-5cm}{0cm}
+%	\begin{colormixin}{\the\opaqueness!averagebackgroundcolor}
+%		\hskip\offset
+%		\begin{minipage}{\textwidth}
+%			\begin{theorem}
+%				This theorem flies in.
+%			\end{theorem}
+%		\end{minipage}
+%	\end{colormixin}
+%\end{frame}
+%
+\begin{frame}
+\begin{center}
+	\animate<1-3>
+	Danke für Ihre Aufmerksamkeit.\mybreak
+	Fragen?
+\end{center}	
+\end{frame}
+
+\begin{frame}[fragile]
+	\animate<1-16>
+	\setlength{\unitlength}{0.9cm}
+	\newcommand{\tabtemp}{\phantom{x}}
+	\newcommand{\tabuarrow}[1][\tabtemp]{#1} %\begin{picture}(0,0)\put(0.15,0.25){\vector(0,1){0.5}}\end{picture}#1}
+	\newcommand{\tablarrow}[1][\tabtemp]{\begin{picture}(0,0)\put(0,0.15){\vector(-1,0){0.5}}\end{picture}#1}
+	\newcommand{\tabluarrow}[1][\tabtemp]{\tablarrow[]\tabuarrow[#1]}
+	\newcommand{\tabnwarrow}[1][\tabtemp]{\begin{picture}(0,0)\put(0,0.25){\vector(-1,1){0.5}}\end{picture}#1}
+	\newcommand{\tabdarrow}[1][\tabtemp]{\begin{picture}(0,0)\put(0.15,0){\vector(0,-1){0.5}}\end{picture}#1}
+	\newcommand{\tabrarrow}[1][\tabtemp]{\begin{picture}(0,0)\put(0.25,0.1){\vector(1,0){0.5}}\end{picture}#1}
+	\newcommand{\tabsearrow}[1][\tabtemp]{\begin{picture}(0,0)\put(0.25,0.1){\vector(1,-1){0.5}}\end{picture}#1}
+	\newcommand{\tabrdarrow}[1][\tabtemp]{\tabrarrow[]\tabdarrow[#1]}
+	\only<1-9>{
+		Anhang - Dynamische Programmierung für den Spezialfall zweier Logs:\mybreak
+		
+		Eingabe:\mybreak	
+		\begin{center}
+			\begin{tabular}{cccccc}
+				B & c & a & B &   & \\
+				C & A & C & b & C & A
+			\end{tabular} \mybreak
+		\end{center}
+		
+		Geschrieben als Matrix:\mybreak}
+		\only<10-16>{Rechtslösbar:\mybreak}
+		\begin{center}
+			\only<1-2>{
+				\begin{tabular}{c||cccc|cc}
+					&C	&A 	& C	& b	& C	& A \\ \hline
+					\hline B & 	&  	&  	& ?	&  	&  \\ 
+					c &?	&  	&?	&  	& ?	&  \\ 
+					\hline a & 	&? 	&  	&  	&  	& \alt<1>{?}{\alert{$*$}} \\ 
+					\hline B & 	&  	&  	& \alt<1>{?}{\alert{$*$}}	&  	&  \\ 
+					
+				\end{tabular} 
+			}
+			\only<3->{
+				%\newsavebox{\tabluarrowbox}
+				%\savebox{\tabluarrowbox}{\vspace*{-0.5cm}\hspace*{-0.5cm}$\nwarrow$}
+				%\newcommand{\tabluarrow}{\usebox{\tabluarrowbox}}
+				%\newsavebox{\luarrowbox}
+				%\savebox{\luarrowbox}{\vspace*{-0.5cm}\hspace*{-0.5cm}$\nwarrow$}
+				%\newcommand{\tablarrow}{\hspace*{-0.5cm}$\longleftarrow$}
+				%\newcommand{\textlonguparrow}{\scalebox{1}[2]{$\uparrow$}}
+				%\newsavebox{\tabuarrowbox}
+				%\savebox{\tabuarrowbox}{\vspace*{1cm}$\uparrow$}
+				\begin{tabular}{c||cccc|cc}
+					&C	&A 	& C	& b	& C	& A \\ \hline
+					\hline B & 	&\tablarrow  	& \tablarrow 	&\tablarrow[\temporal<5>{?}{\alert{$+$}}{$+$}]	&  	&  \\ 
+					c &\tabuarrow[\temporal<8>{?}{\alert{$+$}}{$+$}]	&  \tabluarrow	&\tabluarrow[\temporal<6>{?}{\alert{$0$}}{$0$}]	&  	&\tabuarrow[]\tabnwarrow[\temporal<4>{?}{\alert{$+$}}{$+$}]	&  \\ 
+					\hline a & 	&\tabnwarrow[]\tablarrow[\temporal<7>{?}{\alert{$+$}}{$+$}] 	&  	& 	\tabnwarrow&  &\tablarrow[]\tabnwarrow[$*$] \\ 
+					\hline B & 	&\tablarrow   &\tabnwarrow[]\tablarrow  &\tablarrow[$*$]	&  	&  \\ 
+				\end{tabular} 
+			}
+		\end{center}	
+		
+		\only<10-16>{Linkslösbar:\mybreak
+			\begin{center}
+				
+				
+				
+				\begin{tabular}{c||ccc|ccc}
+					&C	&A 	& C	& b	& C	& A \\ \hline
+					\hline B & 	&  	& 	&\tabsearrow[]\tabrarrow[\temporal<11>{?}{\alert{$*$}}{$*$}]	&  \tabrarrow	&  \\ 
+					\hline  c &\tabsearrow[]\tabrarrow[\temporal<11>{?}{\alert{$*$}}{$*$}]	&  \tabrarrow	&\temporal<11>{?}{\alert{$*$}}{$*$}	&  	&\tabrarrow[]\tabsearrow[\temporal<14>{?}{\alert{$+$}}{$+$}]	&  \\ 
+					\hline a & 	&\tabrdarrow[\temporal<12>{?}{\alert{$+$}}{$+$}] 	& \tabdarrow[] \tabsearrow 	& 	&  &\tabdarrow[\temporal<15>{?}{\alert{$+$}}{$+$}] \\ 
+					B & 	& \tabrarrow  &&\tabrarrow[\temporal<13>{?}{\alert{$+$}}{$+$}]	&  \tabrarrow	&  \\ 
+				\end{tabular} 
+				
+				%\hspace{0.5cm}
+				%$\Longrightarrow$
+				%\hspace{0.5cm}
+				%\begin{minipage}{7cm}
+				%	\begin{tabular}{c||ccc|ccc}
+				%		&C	&A 	& C	& b	& C	& A \\ \hline
+				%		\hline B & 	&  	& 	&\tabsearrow[]\tabrarrow[*]	&  \tabrarrow	&  \\ 
+				%		\hline  c &\tabsearrow[]\tabrarrow[*]	&  \tabrarrow	&*	&  	&\tabrarrow[]\tabsearrow[+]	&  \\ 
+				%		\hline a & 	&\tabrdarrow[+] 	& \tabdarrow[] \tabsearrow 	& 	&  &\tabdarrow[+] \\ 
+				%		B & 	& \tabrarrow  &&\tabrarrow[+]	&  \tabrarrow	&  \\ 
+				%	\end{tabular} 
+				%\end{minipage}
+				%	
+			\end{center}}
+		\end{frame}
+		
+\end{document}
